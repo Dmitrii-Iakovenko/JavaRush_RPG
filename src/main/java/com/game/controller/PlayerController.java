@@ -30,11 +30,19 @@ public class PlayerController {
     }
 
 
-    @GetMapping("{id}")
-    public ResponseEntity<Player> get(@PathVariable Long id) {
+    @GetMapping("{idString}")
+    public ResponseEntity<Player> get(@PathVariable String idString) {
+        long id;
+
         // не валидное ID
+        try {
+            id = Long.parseLong(idString);
+        } catch (NumberFormatException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         if (id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
+        // id валидное. ищем игрока
         Player player = playerService.findById(id);
         return (player != null)
                 ? new ResponseEntity<>(player, HttpStatus.OK)

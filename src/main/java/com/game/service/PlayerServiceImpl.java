@@ -62,11 +62,7 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Override
     public Player findById(Long id) {
-        try {
-            return repository.findById(id).orElse(null);
-        } catch (Exception e) {
-            return null;
-        }
+        return repository.findById(id).orElse(null);
     }
 
 
