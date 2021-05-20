@@ -9,19 +9,20 @@ public class Player {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(length = 12)
     private String name;
-
     @Column(length = 30)
     private String title;
+    @Enumerated(EnumType.STRING)
     private Race race;
+    @Enumerated(EnumType.STRING)
     private Profession profession;
     private Date birthday;
     private Boolean banned;
     private Integer experience;
     private Integer level;
     private Integer untilNextLevel;
+
 
     protected Player() {
 
@@ -59,6 +60,10 @@ public class Player {
 
     public Profession getProfession() {
         return profession;
+    }
+
+    public void setProfession(String profession) {
+        this.profession = Profession.valueOf(profession);
     }
 
     public Date getBirthday() {
