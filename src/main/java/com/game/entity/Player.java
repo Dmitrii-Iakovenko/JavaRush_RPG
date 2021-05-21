@@ -85,4 +85,41 @@ public class Player {
     public Integer getUntilNextLevel() {
         return untilNextLevel;
     }
+
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setRace(Race race) {
+        this.race = race;
+    }
+
+    public void setProfession(Profession profession) {
+        this.profession = profession;
+    }
+
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
+    }
+
+    public void setBanned(Boolean banned) {
+        this.banned = banned;
+    }
+
+    public void setExperience(Integer experience) {
+        this.experience = experience;
+    }
+
+    public void setLevel(Integer level) {
+        this.level = level;
+    }
+
+    public void setUntilNextLevel(Integer untilNextLevel) {
+        this.untilNextLevel = untilNextLevel;
+    }
 }

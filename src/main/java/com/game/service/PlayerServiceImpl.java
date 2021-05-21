@@ -65,5 +65,14 @@ public class PlayerServiceImpl implements PlayerService {
         return repository.findById(id).orElse(null);
     }
 
+    @Override
+    public void delete(Player player) {
+        repository.delete(player);
+    }
+
+    @Override
+    public Player update(Player player) {
+        return repository.save(player);
+    }
 
 }
