@@ -24,10 +24,12 @@ public class PlayerController {
     @PostMapping("")
 //    @ResponseBody
     public ResponseEntity<Player> create(@RequestBody Map<String, String> params) {
-        Player player = playerService.create(params);
-        return (player != null)
-                ? new ResponseEntity<>(player, HttpStatus.OK)
-                : new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        try {
+            Player player = playerService.create(params);
+            return new ResponseEntity<>(player, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 
@@ -71,25 +73,26 @@ public class PlayerController {
         } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("{idString}")
-    public ResponseEntity<Player> update(@PathVariable String idString,
-                                         @RequestBody PlayerDTO dto) {
-        long id = 0;
-
+    @PostMapping("{id}")
+    public ResponseEntity<Player> update(@PathVariable Long id,
+                                         @RequestBody PlayerDTO playerDTO) {
         // не валидное ID
+        if (id <= 0)
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        // id валидное. но такого игрока нет
+        Player player = playerService.findById(id);
+        if (player == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        // игрок найдён
         try {
-            id = Long.parseLong(idString);
-        } catch (NumberFormatException e) {
+            player = playerDTO.update(player);
+            playerService.update(player);
+            return new ResponseEntity<>(player, HttpStatus.OK);
+        } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        if (id <= 0) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-        // id валидное. ищем игрока
-        Player player = playerService.findById(id);
-        if (player != null) {
-            playerService.update(player);
-            return new ResponseEntity<>(HttpStatus.OK);
-        } else return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
 }

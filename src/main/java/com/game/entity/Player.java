@@ -1,7 +1,9 @@
 package com.game.entity;
 
 import javax.persistence.*;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 @Entity
@@ -28,17 +30,14 @@ public class Player {
 
     }
 
-    public Player(String name, String title, Race race, Profession profession, Date birthday, Boolean banned, Integer experience) {
-        this.name = name;
-        this.title = title;
+    public Player(String name, String title, Race race, Profession profession, Date birthday, Boolean banned, Integer experience) throws Exception {
+        setName(name);
+        setTitle(title);
         this.race = race;
         this.profession = profession;
-        this.birthday = birthday;
-        this.banned = banned;
-        this.experience = experience;
-
-        level = (int) ((Math.sqrt(2500 + 200 * experience) - 50) / 100);
-        untilNextLevel = 50 * (level + 1) * (level + 2) - experience;
+        setBirthday(birthday);
+        setBanned(banned);
+        setExperience(experience);
     }
 
 
@@ -87,11 +86,15 @@ public class Player {
     }
 
 
-    public void setName(String name) {
+    public void setName(String name) throws Exception {
+        if (name == null || name.equals("") || name.length() > 12)
+            throw new Exception("[Error] Player.setName");
         this.name = name;
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title) throws Exception {
+        if (title == null || title.length() > 30)
+            throw new Exception("[Error] Player.setTitle");
         this.title = title;
     }
 
@@ -103,23 +106,28 @@ public class Player {
         this.profession = profession;
     }
 
-    public void setBirthday(Date birthday) {
+    public void setBirthday(Date birthday) throws Exception {
+        if (birthday == null)
+            throw new Exception("[Error] Player.setBirthday");
+
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(birthday);
+        int year = calendar.get(Calendar.YEAR);
+        if (year < 2000 || year > 3000)
+            throw new Exception("[Error] Player.setBirthday");
+
         this.birthday = birthday;
     }
 
     public void setBanned(Boolean banned) {
-        this.banned = banned;
+        this.banned = (banned != null) ? banned : false;
     }
 
-    public void setExperience(Integer experience) {
+    public void setExperience(Integer experience) throws Exception {
+        if (experience < 0 || experience > 10_000_000)
+            throw new Exception("[Error] Player.setExperience");
         this.experience = experience;
-    }
-
-    public void setLevel(Integer level) {
-        this.level = level;
-    }
-
-    public void setUntilNextLevel(Integer untilNextLevel) {
-        this.untilNextLevel = untilNextLevel;
+        level = (int) ((Math.sqrt(2500 + 200 * experience) - 50) / 100);
+        untilNextLevel = 50 * (level + 1) * (level + 2) - experience;
     }
 }

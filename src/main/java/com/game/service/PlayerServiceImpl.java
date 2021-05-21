@@ -22,42 +22,26 @@ public class PlayerServiceImpl implements PlayerService {
 
 
     @Override
-    public Player create(Map<String, String> params) {
-        try {
-            // Проверяем входящий запрос
-            String name = params.getOrDefault("name", null);
-            if (name == null || name.equals("") || name.length() > 12) return null;
+    public Player create(Map<String, String> params) throws Exception {
+        // Проверяем входящий запрос
+        String name = params.getOrDefault("name", null);
+        String title = params.getOrDefault("title", null);
+        Race race = Race.valueOf(params.get("race"));
+        Profession profession = Profession.valueOf(params.get("profession"));
 
-            String title = params.getOrDefault("title", null);
-            if (title == null || title.length() > 30) return null;
+        long date = Long.parseLong(params.get("birthday"));
+        if (date < 0)
+            throw new Exception("[Error] PlayerService.create");
+        Date birthday = new Date(date);
 
-            Race race = Race.valueOf(params.get("race"));
+        Boolean banned = Boolean.parseBoolean(params.get("banned"));
+        int experience = Integer.parseInt(params.get("experience"));
 
-            Profession profession = Profession.valueOf(params.get("profession"));
+        // Запрос валидный, создаём нового игрока
+        Player player = new Player(name, title, race, profession, birthday, banned, experience);
 
-            long date = Long.parseLong(params.get("birthday"));
-            if (date < 0) return null;
-            Date birthday = new Date(date);
-            Calendar calendar = new GregorianCalendar();
-            calendar.setTime(birthday);
-            int year = calendar.get(Calendar.YEAR);
-            if (year < 2000 || year > 3000) return null;
-
-            boolean banned = params.containsKey("banned") &&
-                    Boolean.parseBoolean(params.get("banned"));
-
-            int experience = Integer.parseInt(params.get("experience"));
-            if (experience < 0 || experience > 10_000_000) return null;
-
-            // Запрос валидный, создаём нового игрока
-            Player player = new Player(name, title, race, profession, birthday, banned, experience);
-
-            // Сохраняем пользователя в БД и возвращаем ссылку на него
-            return repository.save(player);
-
-        } catch (Exception e) {
-            return null;
-        }
+        // Сохраняем пользователя в БД и возвращаем ссылку на него
+        return repository.save(player);
     }
 
     @Override
