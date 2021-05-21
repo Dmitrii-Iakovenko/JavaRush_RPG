@@ -5,9 +5,11 @@ import com.game.dto.PlayerDTO;
 import com.game.entity.Player;
 import com.game.service.PlayerService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,7 +24,6 @@ public class PlayerController {
 
 
     @PostMapping("")
-//    @ResponseBody
     public ResponseEntity<Player> create(@RequestBody Map<String, String> params) {
         try {
             Player player = playerService.create(params);
@@ -95,8 +96,29 @@ public class PlayerController {
         }
     }
 
-}
+    @GetMapping()
+    public ResponseEntity<List<Player>> getPlayers(@RequestParam Map<String, String> params) {
+        try {
+            GetPlayersRequest request = new GetPlayersRequest(params);
+            List<Player> players = playerService.getPlayers(request);
+            return new ResponseEntity<>(players, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
 
+    @GetMapping("count")
+    public ResponseEntity<Integer> count(@RequestParam Map<String, String> params) {
+        try {
+            GetPlayersRequest request = new GetPlayersRequest(params);
+            Integer count = playerService.getCount(request);
+            return new ResponseEntity<>(count, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+}
 
 
 

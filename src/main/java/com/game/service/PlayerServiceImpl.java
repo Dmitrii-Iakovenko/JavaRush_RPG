@@ -1,15 +1,14 @@
 package com.game.service;
 
+import com.game.controller.GetPlayersRequest;
 import com.game.entity.Player;
 import com.game.entity.Profession;
 import com.game.entity.Race;
 import com.game.repository.PlayerRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PlayerServiceImpl implements PlayerService {
@@ -58,5 +57,38 @@ public class PlayerServiceImpl implements PlayerService {
     public Player update(Player player) {
         return repository.save(player);
     }
+
+
+    @Override
+    public List<Player> getPlayers(GetPlayersRequest request) throws Exception {
+        return repository.findAll().stream()
+                .filter(request::predicateName)
+                .filter(request::predicateTitle)
+                .filter(request::predicateRace)
+                .filter(request::predicateProfession)
+                .filter(request::predicateBirthday)
+                .filter(request::predicateBanned)
+                .filter(request::predicateExperience)
+                .filter(request::predicateLevel)
+                .sorted(request.getComparator())
+                .skip(request.skip())
+                .limit(request.limit())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Integer getCount(GetPlayersRequest request) {
+        return Math.toIntExact(repository.findAll().stream()
+                .filter(request::predicateName)
+                .filter(request::predicateTitle)
+                .filter(request::predicateRace)
+                .filter(request::predicateProfession)
+                .filter(request::predicateBirthday)
+                .filter(request::predicateBanned)
+                .filter(request::predicateExperience)
+                .filter(request::predicateLevel)
+                .count());
+    }
+
 
 }
